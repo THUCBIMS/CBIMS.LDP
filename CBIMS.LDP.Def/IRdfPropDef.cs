@@ -5,6 +5,7 @@
 // CBIMS.LDP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
 // You should have received a copy of the GNU Lesser General Public License along with CBIMS.LDP. If not, see <https://www.gnu.org/licenses/>.
 
+using AngleSharp.Dom;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,37 +20,61 @@ namespace CBIMS.LDP.Def
     {
         IEnumerable<IRdfClassDef> Domain { get; }
         IEnumerable<IRdfClassDef> Range { get; }
+        IEnumerable<IRdfPropDef> SuperProps { get; }
     }
 
     public class RdfPropDef : RdfInstPersist, IRdfPropDef
     {
         public IEnumerable<IRdfClassDef> Domain => GetProp<IRdfClassDef>(RDFSCommonDef.domain.QName);
         public IEnumerable<IRdfClassDef> Range => GetProp<IRdfClassDef>(RDFSCommonDef.range.QName);
+        public IEnumerable<IRdfPropDef> SuperProps => GetProp<IRdfPropDef>(RDFSCommonDef.subPropertyOf.QName);
 
         public bool IsLiteral => Range != null && Range.Any() && Range.All(t => t is IRdfLiteralClassDef);
 
 
-        public RdfPropDef(RdfNSDef ns, string name, IUriNode node = null) : base(ns, name, RDFSCommonDef.Property, node)
+        public RdfPropDef(RdfNSDef ns, string name, 
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null) 
+            : base(ns, name, RDFSCommonDef.Property, node)
         {
-
+            if (actionOnInitialize != null)
+            {
+                actionOnInitialize(this);
+            }
         }
         
-        protected RdfPropDef(RdfNSDef ns, string name, IRdfClassDef type, IUriNode node = null) : base(ns, name, type, node)
+        protected RdfPropDef(RdfNSDef ns, string name, IRdfClassDef type
+            , IUriNode node, Action<RdfPropDef> actionOnInitialize) 
+            : base(ns, name, type, node)
         {
-
+            if (actionOnInitialize != null)
+            {
+                actionOnInitialize(this);
+            }
         }
 
-        public RdfPropDef(RdfNSDef ns, string name, IRdfURIClassDef domain, IRdfClassDef range, IUriNode node = null) : base(ns, name, RDFSCommonDef.Property, node)
+        public RdfPropDef(RdfNSDef ns, string name, IRdfURIClassDef domain, IRdfClassDef range, 
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null) 
+            : base(ns, name, RDFSCommonDef.Property, node)
         {
             SetProp(RDFSCommonDef.domain.QName, domain);
             SetProp(RDFSCommonDef.range.QName, range);
+            if (actionOnInitialize != null)
+            {
+                actionOnInitialize(this);
+            }
         }
 
         public RdfPropDef(RdfNSDef ns, string name, 
-            IEnumerable<IRdfURIClassDef> domains, IEnumerable<IRdfClassDef> ranges, IUriNode node = null) : base(ns, name, RDFSCommonDef.Property, node)
+            IEnumerable<IRdfURIClassDef> domains, IEnumerable<IRdfClassDef> ranges, 
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null) 
+            : base(ns, name, RDFSCommonDef.Property, node)
         {
             SetProps(RDFSCommonDef.domain.QName, domains);
             SetProps(RDFSCommonDef.range.QName, ranges);
+            if (actionOnInitialize != null)
+            {
+                actionOnInitialize(this);
+            }
         }
 
 
@@ -62,33 +87,41 @@ namespace CBIMS.LDP.Def
         {
             AddProp(RDFSCommonDef.range.QName, def);
         }
+        public void AddSuperProp(IRdfPropDef def)
+        {
+            AddProp(RDFSCommonDef.subPropertyOf.QName, def);
+        }
     }
 
     public class RdfStringPropDef : RdfPropDef
     {
-        public RdfStringPropDef(RdfNSDef ns, string name, IRdfURIClassDef domain, IUriNode node) 
-            : base(ns, name, domain, XsdLiteral.STRING, node)
+        public RdfStringPropDef(RdfNSDef ns, string name, IRdfURIClassDef domain, 
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null) 
+            : base(ns, name, domain, XsdLiteral.STRING, node, actionOnInitialize)
         {
         }
     }
     public class RdfIntegerPropDef : RdfPropDef
     {
-        public RdfIntegerPropDef(RdfNSDef ns, string name, IRdfURIClassDef domain, int? cardMin, int? cardMax, IUriNode node) 
-            : base(ns, name, domain, XsdLiteral.INTEGER, node)
+        public RdfIntegerPropDef(RdfNSDef ns, string name, IRdfURIClassDef domain,
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null) 
+            : base(ns, name, domain, XsdLiteral.INTEGER, node, actionOnInitialize)
         {
         }
     }
     public class RdfDoublePropDef : RdfPropDef
     {
-        public RdfDoublePropDef(RdfNSDef ns, string name, IRdfURIClassDef domain, int? cardMin, int? cardMax, IUriNode node) 
-            : base(ns, name, domain, XsdLiteral.DOUBLE, node)
+        public RdfDoublePropDef(RdfNSDef ns, string name, IRdfURIClassDef domain, 
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null) 
+            : base(ns, name, domain, XsdLiteral.DOUBLE, node, actionOnInitialize)
         {
         }
     }
     public class RdfBooleanPropDef : RdfPropDef
     {
-        public RdfBooleanPropDef(RdfNSDef ns, string name, IRdfURIClassDef domain, int? cardMin, int? cardMax, IUriNode node) 
-            : base(ns, name, domain, XsdLiteral.BOOLEAN, node)
+        public RdfBooleanPropDef(RdfNSDef ns, string name, IRdfURIClassDef domain,
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null) 
+            : base(ns, name, domain, XsdLiteral.BOOLEAN, node, actionOnInitialize)
         {
         }
     }
@@ -98,13 +131,10 @@ namespace CBIMS.LDP.Def
     {
         protected abstract void SetType();
 
-
-
-
-
         protected OwlPropertyDefBase(RdfNSDef ns, string name, 
-            IRdfURIClassDef domain, IRdfClassDef range, IUriNode node)
-            : base(ns, name, null, node)
+            IRdfURIClassDef domain, IRdfClassDef range, 
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null)
+            : base(ns, name, null, node, actionOnInitialize)
         {
             SetProp(RDFSCommonDef.domain.QName, domain);
             SetProp(RDFSCommonDef.range.QName, range);
@@ -114,8 +144,8 @@ namespace CBIMS.LDP.Def
 
         protected OwlPropertyDefBase(RdfNSDef ns, string name, 
             IEnumerable<IRdfURIClassDef> domains, IEnumerable<IRdfClassDef> ranges,
-            IUriNode node = null)
-            : base(ns, name, null, node)
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null)
+            : base(ns, name, null, node, actionOnInitialize)
         {
             SetProps(RDFSCommonDef.domain.QName, domains);
             SetProps(RDFSCommonDef.range.QName, ranges);
@@ -231,15 +261,15 @@ namespace CBIMS.LDP.Def
     public class OwlObjectPropertyDef: OwlPropertyDefBase
     {
         public OwlObjectPropertyDef(RdfNSDef ns, string name, IRdfURIClassDef domain, IRdfClassDef range,
-            IUriNode node = null)
-            : base(ns, name, domain, range, node)
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null)
+            : base(ns, name, domain, range, node, actionOnInitialize)
         {
 
         }
 
-        public OwlObjectPropertyDef(RdfNSDef ns, string name, IEnumerable<IRdfURIClassDef> domains, IEnumerable<IRdfClassDef> ranges,
-            IUriNode node = null)
-            : base(ns, name, domains, ranges, node)
+        public OwlObjectPropertyDef(RdfNSDef ns, string name, IEnumerable<IRdfURIClassDef> domains, IEnumerable<IRdfClassDef> ranges, 
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null) 
+            : base(ns, name, domains, ranges, node, actionOnInitialize)
         {
 
         }
@@ -253,16 +283,16 @@ namespace CBIMS.LDP.Def
     public class OwlDatatypePropertyDef : OwlPropertyDefBase
     {
 
-        public OwlDatatypePropertyDef(RdfNSDef ns, string name, IRdfURIClassDef domain, IRdfClassDef range,
-            IUriNode node = null) 
-            : base(ns, name, domain, range, node)
+        public OwlDatatypePropertyDef(RdfNSDef ns, string name, IRdfURIClassDef domain, IRdfClassDef range, 
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null) 
+            : base(ns, name, domain, range, node, actionOnInitialize)
         {
             
         }
 
-        public OwlDatatypePropertyDef(RdfNSDef ns, string name, IEnumerable<IRdfURIClassDef> domains, IEnumerable<IRdfClassDef> ranges,
-            IUriNode node = null)
-            : base(ns, name, domains, ranges, node)
+        public OwlDatatypePropertyDef(RdfNSDef ns, string name, IEnumerable<IRdfURIClassDef> domains, IEnumerable<IRdfClassDef> ranges, 
+            IUriNode node = null, Action<RdfPropDef> actionOnInitialize = null) 
+            : base(ns, name, domains, ranges, node, actionOnInitialize)
         {
 
         }

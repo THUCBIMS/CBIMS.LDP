@@ -40,6 +40,7 @@ namespace CBIMS.LDP.Def
         public static readonly RdfPropDef label = new RdfPropDef(RdfCommonNS.RDFS, "label", null);
         public static readonly RdfPropDef comment = new RdfPropDef(RdfCommonNS.RDFS, "comment", null);
         public static readonly RdfPropDef subClassOf = new RdfPropDef(RdfCommonNS.RDFS, "subClassOf", null);
+        public static readonly RdfPropDef subPropertyOf = new RdfPropDef(RdfCommonNS.RDFS, "subPropertyOf", null);
         public static readonly RdfPropDef domain = new RdfPropDef(RdfCommonNS.RDFS, "domain", null);
         public static readonly RdfPropDef range = new RdfPropDef(RdfCommonNS.RDFS, "range", null);
 
