@@ -2,7 +2,7 @@
 
     <PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
-		<Version>0.3.0</Version>
+		<Version>0.3.1</Version>
         <Platforms>AnyCPU;x64</Platforms>
 	    <LangVersion>10.0</LangVersion>
     </PropertyGroup>
@@ -20,7 +20,7 @@
 
 	<ItemGroup Condition="!$(UseProjectReference)">
 		<PackageReference Include="CBIMS.LDP.IFC" Version="0.3.0" />
-		<PackageReference Include="CBIMS.LDP.Geom" Version="0.3.0" />
+		<PackageReference Include="CBIMS.LDP.Geom" Version="0.3.1" />
 	</ItemGroup>
 	
 	<ItemGroup>

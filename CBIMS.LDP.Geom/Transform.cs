@@ -218,5 +218,129 @@ namespace CBIMS.LDP.Geom
             DenseMatrix obj = Mat.Inverse() as DenseMatrix;
             return new Transform(obj);
         }
+
+        //static methods
+
+
+        public static Transform Move(double x, double y, double z)
+        {
+            Transform transform = new Transform();
+            transform.Origin = new double[3] { x, y, z };
+            transform._toMatrix();
+            return transform;
+        }
+
+        public static Transform DoRotateX(double radian)
+        {
+            double sin = Math.Sin(radian);
+            double cos = Math.Cos(radian);
+            double[] MR_list =
+            {
+            1,
+            0,
+            0,
+            0,
+                0,
+                cos,
+                sin,
+                0,
+            0,
+            -sin,
+            cos,
+            0,
+                0,
+                0,
+                0,
+                1};
+            DenseMatrix MR = new DenseMatrix(4, 4, MR_list);
+            return new Transform(MR);
+        }
+
+        public static Transform DoRotateY(double radian)
+        {
+            double sin = Math.Sin(radian);
+            double cos = Math.Cos(radian);
+            double[] MR_list =
+            {
+            cos,
+            0,
+            -sin,
+            0,
+                0,
+                1,
+                0,
+                0,
+            sin,
+            0,
+            cos,
+            0,
+                0,
+                0,
+                0,
+                1};
+            DenseMatrix MR = new DenseMatrix(4, 4, MR_list);
+            return new Transform(MR);
+        }
+
+        public static Transform DoRotateZ(double radian)
+        {
+            double sin = Math.Sin(radian);
+            double cos = Math.Cos(radian);
+            double[] MR_list =
+            {
+            cos,
+            sin,
+            0,
+            0,
+                -sin,
+                cos,
+                0,
+                0,
+            0,
+            0,
+            1,
+            0,
+                0,
+                0,
+                0,
+                1};
+            DenseMatrix MR = new DenseMatrix(4, 4, MR_list);
+            return new Transform(MR);
+        }
+
+        public static Transform DoRotate(ArrayDouble axis, double radian)
+        {
+            double cos = Math.Cos(radian);
+            double sin = Math.Sin(radian);
+
+            var v = axis.Normalize();
+
+            double x = v.X;
+            double y = v.Y;
+            double z = v.Z;
+
+            double[] MR_list =
+            {
+            cos + (1 - cos) * x * x,
+            (1 - cos) * x * y + sin * z,
+            (1 - cos) * x * z - sin * y,
+            0,
+                (1 - cos) * y * x - sin * z,
+                cos + (1 - cos) * y * y,
+                (1 - cos) * y * z + sin * x,
+                0,
+            (1 - cos) * z * x + sin * y,
+            (1 - cos) * z * y - sin * x,
+            cos + (1 - cos) * z * z,
+            0,
+                0,
+                0,
+                0,
+                1
+            };
+
+            DenseMatrix MR = new DenseMatrix(4, 4, MR_list);
+            return new Transform(MR);
+        }
     }
 }

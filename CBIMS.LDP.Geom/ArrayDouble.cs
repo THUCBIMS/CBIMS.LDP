@@ -135,14 +135,25 @@ namespace CBIMS.LDP.Geom
         {
             return X + "," + Y + "," + Z;
         }
-        public ArrayDouble GetDirectionUnit()
+
+        public double GetDirectionDouble()
         {
-            double length = Length;
-            if (length == 0.0)
-            {
-                return new ArrayDouble(0.0, 0.0, 0.0);
-            }
-            return 1.0 / length * this;
+            // increases counter-clockwise
+            // 0: positive x-axis
+
+            return Math.Atan2(Y, X);
         }
+
+        public static ArrayDouble DirectionDouble2XYZ(double ang)
+        {
+            // increases counter-clockwise
+            // 0: positive x-axis
+            double y = Math.Sin(ang);
+            double x = Math.Cos(ang);
+            return new ArrayDouble(x, y, 0);
+        }
+
+
+
     }
 }

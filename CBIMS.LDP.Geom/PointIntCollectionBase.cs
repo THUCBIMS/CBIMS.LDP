@@ -119,13 +119,13 @@ namespace CBIMS.LDP.Geom
                 ArrayDouble eX = ArrayDouble.EX;
                 ArrayDouble eY = ArrayDouble.EY;
                 double[] origin = new double[3];
-                Transform transform = new Transform(AxisA.GetDirectionUnit().ToArray(), eX.GetDirectionUnit().ToArray(), eY.GetDirectionUnit().ToArray(), origin, 1.0);
+                Transform transform = new Transform(AxisA.Normalize().ToArray(), eX.Normalize().ToArray(), eY.Normalize().ToArray(), origin, 1.0);
                 return GetOBB(transform, elementId);
             }
             ArrayDouble arrayDouble = ArrayDouble.EZ ^ AxisA;
             ArrayDouble arrayDouble2 = AxisA ^ arrayDouble;
             double[] origin2 = new double[3];
-            Transform transform2 = new Transform(AxisA.GetDirectionUnit().ToArray(), arrayDouble.GetDirectionUnit().ToArray(), arrayDouble2.GetDirectionUnit().ToArray(), origin2, 1.0);
+            Transform transform2 = new Transform(AxisA.Normalize().ToArray(), arrayDouble.Normalize().ToArray(), arrayDouble2.Normalize().ToArray(), origin2, 1.0);
             return GetOBB(transform2, elementId);
         }
 
