@@ -18,12 +18,12 @@ namespace CBIMS.LDP.Geom
         public const string DEFAULT_LEVEL_NAME = "__DEFAULT__";
         public static readonly Level DEFAULT_LEVEL = new Level("__DEFAULT__", -1000000, null, null, 1000000);
 
-        private Dictionary<string, Level> Levels = new Dictionary<string, Level>();
+        private Dictionary<string, Level> Levels = new Dictionary<string, Level>(); // level name to level data
 
         private Dictionary<string, RTree<BBox>> LevelRTreeMap = new Dictionary<string, RTree<BBox>>();
 
-        private Dictionary<string, HashSet<string>> LevelElementsMap = new Dictionary<string, HashSet<string>>();
-        private Dictionary<string, string> LevelElementsMapInv = new Dictionary<string, string>();
+        private Dictionary<string, HashSet<string>> LevelElementsMap = new Dictionary<string, HashSet<string>>(); // level id to element ids
+        private Dictionary<string, string> LevelElementsMapInv = new Dictionary<string, string>(); // element id to level id
 
         private Dictionary<string, BBox> IdBBoxMap = new Dictionary<string, BBox>();
         private Dictionary<string, PointInt> LocationMap = new Dictionary<string, PointInt>();
@@ -104,11 +104,63 @@ namespace CBIMS.LDP.Geom
             return true;
         }
 
-        public string GetContainedInLevelById(string id)
+        public string GetContainedInLevelById(string elemid)
         {
-            if (LevelElementsMapInv.ContainsKey(id))
+            if (LevelElementsMapInv.ContainsKey(elemid))
             {
-                return LevelElementsMapInv[id];
+                return LevelElementsMapInv[elemid];
+            }
+            return null;
+        }
+
+        public IEnumerable<string> LevelNames => Levels.Keys;
+        public IEnumerable<string> ElementIds => IdBBoxMap.Keys;
+        public IEnumerable<string> GetElementIdsByLevelName(string levelName)
+        {
+            if (LevelElementsMap.ContainsKey(levelName))
+            {
+                return LevelElementsMap[levelName];
+            }
+            return Enumerable.Empty<string>();
+        }
+        public Level GetLevelDataByName(string levelName)
+        {
+            if (Levels.ContainsKey(levelName))
+            {
+                return Levels[levelName];
+            }
+            return null;
+        }
+        public RTree<BBox> GetRTreeByLevelName(string levelName)
+        {
+            if (LevelRTreeMap.ContainsKey(levelName))
+            {
+                return LevelRTreeMap[levelName];
+            }
+            return null;
+        }
+
+        public BBox GetBBoxById(string elemid)
+        {
+            if (IdBBoxMap.ContainsKey(elemid))
+            {
+                return IdBBoxMap[elemid];
+            }
+            return null;
+        }
+        public PointInt GetLocationById(string elemid)
+        {
+            if (LocationMap.ContainsKey(elemid))
+            {
+                return LocationMap[elemid];
+            }
+            return null;
+        }
+        public PointIntList GetLocationCurveById(string elem)
+        {
+            if (LocationCurveMap.ContainsKey(elem))
+            {
+                return LocationCurveMap[elem];
             }
             return null;
         }

@@ -222,7 +222,7 @@ namespace CBIMS.LDP.Geom
         //static methods
 
 
-        public static Transform Move(double x, double y, double z)
+        public static Transform DoMove(double x, double y, double z)
         {
             Transform transform = new Transform();
             transform.Origin = new double[3] { x, y, z };
